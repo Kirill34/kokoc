@@ -3,6 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="${name}"></title>
+    <script>
+        function getMonthStat(id)
+        {
+            var xhr = new XMLHttpRequest()
+            xhr.open("GET","../sportKind/"+id+"/byMonthStat")
+            xhr.responseType="json"
+            xhr.send()
+            xhr.onload = () => {
+                alert(xhr.response)
+            }
+        }
+    </script>
 </head>
 <body>
     <h1 th:text="${name}"></h1>
@@ -15,6 +27,10 @@
     </th:block>
 
     <p th:text="${allSum}"></p>
+
+    <p>Статистика вида спорта по месяцам</p>
+    <button th:onclick="'getMonthStat('+${id}+');'">Показать</button>
+
 
 </body>
 </html>

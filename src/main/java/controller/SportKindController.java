@@ -1,5 +1,6 @@
 package controller;
 
+import io.swagger.models.auth.In;
 import model.Employee;
 import model.SportAction;
 import model.SportKind;
@@ -11,7 +12,9 @@ import repo.EmployeeRepository;
 import repo.SportActionRepository;
 import repo.SportKindRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -56,6 +59,7 @@ public class SportKindController {
         SportKind sportKind = sportKindRepository.findById(id).get();
 
         model.addAttribute("name",sportKind.getName());
+        model.addAttribute("id",sportKind.getId());
         model.addAttribute("logoFile",sportKind.getLogoFile());
 
         List<SportAction> sportActionList = sportActionRepository.findAllBySportKindId(sportKind.getId());
@@ -71,8 +75,31 @@ public class SportKindController {
         {
             model.addAttribute("allSum","В сумме этим видом спорта занимались " + sumMinutes + " часов");
         }
+
         model.addAttribute("employees",employeesInSport);
         return new ModelAndView("sportKindView");
-
     }
+
+    @GetMapping("/{id}/byMonthStat")
+    public ArrayList<Integer> getCountForEachMonthOfThisYear(@PathVariable Long id)
+    {
+        SportKind sportKind = sportKindRepository.findById(id).get();
+        ArrayList<Integer> res = new ArrayList<>();
+
+        for (int i = 0; i<=12; i++)
+        {
+            res.add(0);
+        }
+
+        List<SportAction> sportActionList = sportActionRepository.findAllBySportKindId(sportKind.getId());
+        for (SportAction s:
+             sportActionList) {
+            LocalDateTime dateTime = s.getStartAction();
+            Integer monthNum = dateTime.getMonthValue();
+            res.add(monthNum,1); //= res.get(dateTime.getMonthValue()) + 1;
+            //res.put(dateTime.getMonth().getValue(), (res.containsKey(dateTime.getMonth().getValue())) ? 1 : (res.get(dateTime.getMonth().getValue()) + 1));
+        }
+        return res;
+    }
+
 }
