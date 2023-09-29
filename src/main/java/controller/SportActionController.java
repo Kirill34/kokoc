@@ -4,6 +4,7 @@ import model.Employee;
 import model.SportAction;
 import model.SportKind;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +14,7 @@ import repo.SportActionRepository;
 import repo.SportKindRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("/sportAction")
@@ -47,5 +49,11 @@ public class SportActionController {
         sportAction.setFinishAction(finishDateTime);
         sportActionRepository.save(sportAction);
         return true;
+    }
+
+    @GetMapping("/forEmployee")
+    public List<SportAction> getSportActionsByEmployee(Long employeeId)
+    {
+        return sportActionRepository.findAllByEmployeeId(employeeId);
     }
 }
