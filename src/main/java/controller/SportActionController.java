@@ -1,0 +1,51 @@
+package controller;
+
+import model.Employee;
+import model.SportAction;
+import model.SportKind;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import repo.DepartamentRepository;
+import repo.EmployeeRepository;
+import repo.SportActionRepository;
+import repo.SportKindRepository;
+
+import java.time.LocalDateTime;
+
+@RestController
+@RequestMapping("/sportAction")
+public class SportActionController {
+
+    @org.springframework.beans.factory.annotation.Autowired(required=true)
+    DepartamentRepository departamentRepository;
+
+    @org.springframework.beans.factory.annotation.Autowired(required=true)
+    EmployeeRepository employeeRepository;
+
+    @org.springframework.beans.factory.annotation.Autowired(required=true)
+    SportActionRepository sportActionRepository;
+
+    @org.springframework.beans.factory.annotation.Autowired(required=true)
+    private SportKindRepository sportKindRepository;
+
+    @PostMapping("/start")
+    public Long add(Long employeeId, Long sportKindId, @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime startDateTime)
+    {
+        Employee employee = employeeRepository.findById(employeeId).get();
+        SportKind sportKind = sportKindRepository.findById(sportKindId).get();
+        SportAction sportAction = new SportAction(employee,sportKind,startDateTime,null,0,0,0);
+        sportActionRepository.save(sportAction);
+        return sportAction.getId();
+    }
+
+    @PostMapping("/finish")
+    public boolean finish(Long sportActionId, @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime finishDateTime)
+    {
+        SportAction sportAction = sportActionRepository.findById(sportActionId).get();
+        sportAction.setFinishAction(finishDateTime);
+        sportActionRepository.save(sportAction);
+        return true;
+    }
+}
