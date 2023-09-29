@@ -1,16 +1,31 @@
 package controller;
 
+import model.Employee;
+import model.SportAction;
 import model.SportKind;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import repo.DepartamentRepository;
+import repo.EmployeeRepository;
+import repo.SportActionRepository;
 import repo.SportKindRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/sportKind")
 public class SportKindController {
+
+    @org.springframework.beans.factory.annotation.Autowired(required=true)
+    DepartamentRepository departamentRepository;
+
+    @org.springframework.beans.factory.annotation.Autowired(required=true)
+    EmployeeRepository employeeRepository;
+
+    @org.springframework.beans.factory.annotation.Autowired(required=true)
+    SportActionRepository sportActionRepository;
 
     @org.springframework.beans.factory.annotation.Autowired(required=true)
     private SportKindRepository sportKindRepository;
@@ -43,6 +58,14 @@ public class SportKindController {
         model.addAttribute("name",sportKind.getName());
         model.addAttribute("logoFile",sportKind.getLogoFile());
 
+        List<SportAction> sportActionList = sportActionRepository.findAllBySportKindId(sportKind.getId());
+
+        List<Employee> employeesInSport = new ArrayList<>();
+        for (SportAction s:
+             sportActionList) {
+            employeesInSport.add(s.getEmployee());
+        }
+        model.addAttribute("employees",employeesInSport);
         return new ModelAndView("sportKindView");
 
     }
