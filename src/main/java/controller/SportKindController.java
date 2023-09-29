@@ -61,9 +61,15 @@ public class SportKindController {
         List<SportAction> sportActionList = sportActionRepository.findAllBySportKindId(sportKind.getId());
 
         List<Employee> employeesInSport = new ArrayList<>();
+        int sumMinutes = 0;
         for (SportAction s:
              sportActionList) {
             employeesInSport.add(s.getEmployee());
+            sumMinutes+=s.getFinishAction().compareTo(s.getStartAction());
+        }
+        if (sportKind.getPayMethod()== SportKind.convertMethod.byMinute)
+        {
+            model.addAttribute("allSum","В сумме этим видом спорта занимались " + sumMinutes + " часов");
         }
         model.addAttribute("employees",employeesInSport);
         return new ModelAndView("sportKindView");
