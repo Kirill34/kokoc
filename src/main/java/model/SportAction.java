@@ -29,6 +29,16 @@ public class SportAction {
 
     private float complex2;
 
+    private int money;
+
+    public int getMoney() {
+        return money;
+    }
+
+    public void setMoney(int money) {
+        this.money = money;
+    }
+
     public SportAction(Employee employee, SportKind sportKind, LocalDateTime startAction, LocalDateTime finishAction, float distance, float complex1, float complex2) {
         this.employee = employee;
         this.sportKind = sportKind;

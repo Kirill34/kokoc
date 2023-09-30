@@ -31,6 +31,8 @@
                 let divActiveTrain = document.getElementById("activeTrain")
 
                 let inputFinishDateTime = document.createElement("input")
+                inputFinishDateTime.type="datetime-local"
+                inputFinishDateTime.value = new Date()
                 let pFinish = document.createElement("p")
                 pFinish.innerText="Дата/время окончания тренировки: "
 

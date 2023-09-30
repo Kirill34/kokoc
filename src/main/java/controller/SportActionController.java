@@ -62,7 +62,12 @@ public class SportActionController {
         {
             sportAction.setDistance(distance);
             sportAction.setFinishAction(finishDateTime);
+
+
+            int money = (int)(distance*10);
+            sportAction.setMoney(money);
             sportActionRepository.save(sportAction);
+
             return true;
         }
         return false;
