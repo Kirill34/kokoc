@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>polyus</artifactId>
+    <artifactId>kokoc</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>kokoc</name>
     <description>kokoc</description>
