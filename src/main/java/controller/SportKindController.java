@@ -96,7 +96,7 @@ public class SportKindController {
              sportActionList) {
             LocalDateTime dateTime = s.getStartAction();
             Integer monthNum = dateTime.getMonthValue();
-            res.add(monthNum,1); //= res.get(dateTime.getMonthValue()) + 1;
+            res.set(monthNum, res.get(monthNum)+1); //= res.get(dateTime.getMonthValue()) + 1;
             //res.put(dateTime.getMonth().getValue(), (res.containsKey(dateTime.getMonth().getValue())) ? 1 : (res.get(dateTime.getMonth().getValue()) + 1));
         }
         return res;
