@@ -63,6 +63,7 @@ public class IndexController {
         return new ModelAndView("register");
     }
 
+    @GetMapping("/initDB")
     public void initDB()
     {
         SportKind football = new SportKind("Футбол", SportKind.convertMethod.byMinute,"football.png");
