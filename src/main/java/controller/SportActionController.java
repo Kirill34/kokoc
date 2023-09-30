@@ -1,17 +1,9 @@
 package controller;
 
-import model.Employee;
-import model.SportAction;
-import model.SportKind;
+import model.*;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import repo.DepartamentRepository;
-import repo.EmployeeRepository;
-import repo.SportActionRepository;
-import repo.SportKindRepository;
+import org.springframework.web.bind.annotation.*;
+import repo.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,6 +24,15 @@ public class SportActionController {
     @org.springframework.beans.factory.annotation.Autowired(required=true)
     private SportKindRepository sportKindRepository;
 
+    @org.springframework.beans.factory.annotation.Autowired(required=true)
+    private CharityEventRepository charityEventRepository;
+
+    @org.springframework.beans.factory.annotation.Autowired(required=true)
+    private CharitySportTransactionRepository charitySportTransactionRepository;
+
+    @org.springframework.beans.factory.annotation.Autowired(required=true)
+    private ActionGeoPointRepository actionGeoPointRepository;
+
     @PostMapping("/start")
     public Long add(Long employeeId, Long sportKindId, @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime startDateTime)
     {
@@ -43,20 +44,33 @@ public class SportActionController {
     }
 
     @PostMapping("/finish")
-    public boolean finish(Long sportActionId, @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime finishDateTime)
+    public boolean finish(Long sportActionId, @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime finishDateTime,Long eventId)
     {
+        CharityEvent charityEvent = charityEventRepository.findById(eventId).get();
         SportAction sportAction = sportActionRepository.findById(sportActionId).get();
         if (sportAction.getSportKind().getPayMethod() == SportKind.convertMethod.byMinute) {
             sportAction.setFinishAction(finishDateTime);
             sportActionRepository.save(sportAction);
+
+            int money = 10;
+            sportAction.setMoney(money);
+            sportActionRepository.save(sportAction);
+
+            CharitySportTransaction charitySportTransaction = new CharitySportTransaction();
+            charitySportTransaction.setSportAction(sportAction);
+            charitySportTransaction.setCharityEvent(charityEvent);
+            charitySportTransaction.setMoney(money);
+            charitySportTransactionRepository.save(charitySportTransaction);
+
             return true;
         }
         return false;
     }
 
     @PostMapping("/finishDistance")
-    public boolean finishByDistanceAction(Long sportActionId, @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime finishDateTime, float distance)
+    public boolean finishByDistanceAction(Long sportActionId, @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime finishDateTime, float distance,Long eventId)
     {
+        CharityEvent charityEvent = charityEventRepository.findById(eventId).get();
         SportAction sportAction = sportActionRepository.findById(sportActionId).get();
         if (sportAction.getSportKind().getPayMethod() == SportKind.convertMethod.byDistance)
         {
@@ -68,9 +82,24 @@ public class SportActionController {
             sportAction.setMoney(money);
             sportActionRepository.save(sportAction);
 
+            CharitySportTransaction charitySportTransaction = new CharitySportTransaction();
+            charitySportTransaction.setSportAction(sportAction);
+            charitySportTransaction.setCharityEvent(charityEvent);
+            charitySportTransaction.setMoney(money);
+            charitySportTransactionRepository.save(charitySportTransaction);
+
             return true;
         }
         return false;
+    }
+
+    @PostMapping("/{id}/addActionGeoPoint")
+    public void addActionGeoPoint(@PathVariable Long id, double latitude, double longitude, @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime dateTime)
+    {
+        //ActionGeoPoint actionGeoPoint = actionGeoPointRepository.findById(id).get();
+        SportAction sportAction = sportActionRepository.findById(id).get();
+        ActionGeoPoint actionGeoPoint = new ActionGeoPoint(latitude, longitude, sportAction, dateTime);
+        actionGeoPointRepository.save(actionGeoPoint);
     }
 
 

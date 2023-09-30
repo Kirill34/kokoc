@@ -1,31 +1,31 @@
 package model;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
-@Entity
 @Table
-public class CharitySportTransaction {
+@Entity
+public class ActionGeoPoint {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "charity_event_id")
-    private CharityEvent charityEvent;
+    private double latitude;
+
+    private double longitude;
 
     @ManyToOne
     @JoinColumn(name = "sport_action_id")
     private SportAction sportAction;
 
-    private int money;
+    private LocalDateTime dateTime;
 
-    public void setMoney(int money) {
-        this.money = money;
-    }
-
-    public int getMoney() {
-        return money;
+    public ActionGeoPoint(double latitude, double longitude, SportAction sportAction, LocalDateTime dateTime) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.sportAction = sportAction;
+        this.dateTime = dateTime;
     }
 
     public SportAction getSportAction() {
@@ -35,15 +35,6 @@ public class CharitySportTransaction {
     public void setSportAction(SportAction sportAction) {
         this.sportAction = sportAction;
     }
-
-    public CharityEvent getCharityEvent() {
-        return charityEvent;
-    }
-
-    public void setCharityEvent(CharityEvent charityEvent) {
-        this.charityEvent = charityEvent;
-    }
-
 
     public Long getId() {
         return id;

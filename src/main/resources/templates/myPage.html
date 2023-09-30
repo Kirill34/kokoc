@@ -10,6 +10,53 @@
     <script>
         sportTypes={}
         trainId = 0
+        eventId = 0
+
+        function sendGeoLocation()
+        {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                var xhr = new XMLHttpRequest()
+                let today = new Date();
+                let todayString = today.toJSON().slice(0,16)
+
+                xhr.open("POST","../../../../sportAction/"+trainId+"/addActionGeoPoint?dateTime="+todayString+"&latitude="+position.coords.latitude+"&longitude="+position.coords.longitude)
+                xhr.responseType="json"
+                xhr.send()
+
+                // console.log(position.coords.latitude, position.coords.longitude);
+            });
+        }
+
+        function fillEvents()
+        {
+            let divEvents = document.getElementById("events")
+            var xhr = new XMLHttpRequest()
+            xhr.open("GET","../../../../chairEvent/all")
+            xhr.responseType="json"
+            xhr.send()
+            xhr.onload = () => {
+                let arr = xhr.response
+                for (let key in arr)
+                {
+                    let div = document.createElement("div")
+                    div.classList.add("card")
+                    div.style.width = "max-content"
+                    let p = document.createElement("p")
+                    p.classList.add("card-title")
+                    p.innerText = arr[key]["name"]
+                    div.appendChild(p)
+                    let btn = document.createElement("button")
+                    btn.classList.add("btn","btn-success")
+                    btn.innerText="Помочь"
+                    btn.onclick = () => {
+                        eventId = arr[key]["id"]
+                        document.getElementById("train").style.visibility="visible"
+                    }
+                    div.appendChild(btn)
+                    divEvents.appendChild(div)
+                }
+            }
+        }
 
         function startTrain(myId)
         {
@@ -49,7 +96,7 @@
                 {
                     finishBtn.onclick = () => {
                         var xhr = new XMLHttpRequest()
-                        xhr.open("POST","../../../../sportAction/finish?sportActionId="+trainId+"&finishDateTime="+inputFinishDateTime.value)
+                        xhr.open("POST","../../../../sportAction/finish?sportActionId="+trainId+"&finishDateTime="+inputFinishDateTime.value+"&eventId="+eventId)
                         xhr.responseType="json"
                         xhr.send()
                         xhr.onload = () => {
@@ -60,6 +107,7 @@
                 }
                 if (sportTypes[sportId] == "byDistance") // Оплата по расстоянию
                 {
+                    setInterval(sendGeoLocation, 60000)
                     let pDist = document.createElement("p")
                     pDist.innerText="Введите пройденное расстояние:"
                     let inputDist = document.createElement("input")
@@ -68,7 +116,7 @@
 
                     finishBtn.onclick = () => {
                         var xhr = new XMLHttpRequest()
-                        xhr.open("POST","../../../../sportAction/finishDistance?sportActionId="+trainId+"&finishDateTime="+inputFinishDateTime.value+"&distance="+inputDist.value)
+                        xhr.open("POST","../../../../sportAction/finishDistance?sportActionId="+trainId+"&finishDateTime="+inputFinishDateTime.value+"&distance="+inputDist.value+"&eventId="+eventId)
                         xhr.responseType="json"
                         xhr.send()
                         xhr.onload = () => {
@@ -283,7 +331,14 @@
     <p class="card-title" th:text="${firstName}+' '+${secondName}"></p>
 </div>
 
-<div class="card" style="width: 600px; padding: 20px; margin: 20px;">
+<div class="row" id="events">
+    <script>
+        fillEvents()
+    </script>
+</div>
+
+
+<div id="train" class="card" style="width: 600px; padding: 20px; margin: 20px; visibility: hidden">
 
     <p class="card-title">
         Тренировка
