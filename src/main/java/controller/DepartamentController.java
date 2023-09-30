@@ -1,13 +1,13 @@
 package controller;
 
 import model.Departament;
+import model.Employee;
+import org.springframework.boot.Banner;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import repo.DepartamentRepository;
+import repo.EmployeeRepository;
 
 import java.util.List;
 
@@ -17,6 +17,9 @@ public class DepartamentController {
 
     @org.springframework.beans.factory.annotation.Autowired(required=true)
     DepartamentRepository departamentRepository;
+
+    @org.springframework.beans.factory.annotation.Autowired(required=true)
+    EmployeeRepository employeeRepository;
 
     @PostMapping("/add")
     public Long add(String name)
@@ -37,4 +40,18 @@ public class DepartamentController {
     {
         return new ModelAndView("allDepartamentsView");
     }
+
+    @GetMapping("/{id}/view")
+    public ModelAndView getPageForDepartament(Model model, @PathVariable Long id)
+    {
+        Departament departament = departamentRepository.findById(id).get();
+        model.addAttribute("name",departament.getName());
+        model.addAttribute("id",departament.getId());
+
+        List<Employee> employees = employeeRepository.findAllByDepartamentId(id);
+        model.addAttribute("employees",employees);
+
+        return new ModelAndView("departamentView");
+    }
+
 }
