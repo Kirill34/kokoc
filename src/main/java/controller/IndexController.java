@@ -1,19 +1,13 @@
 package controller;
 
-import model.Departament;
-import model.Employee;
-import model.SportAction;
-import model.SportKind;
+import model.*;
 import org.hibernate.type.LocalDateType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
-import repo.DepartamentRepository;
-import repo.EmployeeRepository;
+import repo.*;
 import org.springframework.ui.Model;
-import repo.SportActionRepository;
-import repo.SportKindRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -34,6 +28,9 @@ public class IndexController {
 
     @org.springframework.beans.factory.annotation.Autowired(required=true)
     private SportKindRepository sportKindRepository;
+
+    @org.springframework.beans.factory.annotation.Autowired(required=true)
+    private CharityEventRepository charityEventRepository;
 
     @GetMapping("/")
     public ModelAndView index()
@@ -110,6 +107,9 @@ public class IndexController {
 
         SportAction sa7 = new SportAction(emp3,football,LocalDateTime.of(2023,7,15,17,0,0), LocalDateTime.of(2023,7,15,19,0,0),0,0,0);
         sportActionRepository.save(sa7);
+
+        CharityEvent ce = new CharityEvent("Помощь амурским тиграм","logo.png",200);
+        charityEventRepository.save(ce);
 
 
     }
