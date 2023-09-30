@@ -3,13 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="${firstName}+' '+${secondName}"></title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
+    <script>
+
+        function getStat(id)
+        {
+            var xhr = new XMLHttpRequest()
+            xhr.open("GET","../../../../employee/"+id+"/stats/sportTimes")
+            xhr.responseType="json"
+            xhr.send()
+            xhr.onload = () => {
+                let labels = []
+                let data = []
+                //return xhr.response
+                for (let key in xhr.response)
+                {
+                    //alert('Key='+key+' Data='+xhr.response[key])
+                    labels.push(key)
+                    data.push(xhr.response[key])
+                    showGraph(labels, data)
+                }
+            }
+        }
+
+        function showGraph(labels, data) {
+            // Doughnut chart
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,//['Dairy', 'Fruits', 'Lean meats', 'Vegetables', 'Whole grains'],
+                    datasets: [{
+                        data: data,//[27.92, 17.53, 14.94, 26.62, 12.99],
+                        backgroundColor: ['#e91e63', '#00e676', '#ff5722', '#1e88e5', '#ffd600'],
+                        borderWidth: 0.5,
+                        borderColor: '#ddd'
+                    }]
+                },
+                options: {
+                    title: {
+                        display: true,
+                        text: 'Популярность видов спорта',
+                        position: 'top',
+                        fontSize: 16,
+                        fontColor: '#111',
+                        padding: 20
+                    },
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 20,
+                            fontColor: '#111',
+                            padding: 15
+                        }
+                    },
+                    tooltips: {
+                        enabled: false
+                    },
+                    plugins: {
+                        datalabels: {
+                            color: '#111',
+                            textAlign: 'center',
+                            font: {
+                                lineHeight: 1.6
+                            },
+                            formatter: function (value, ctx) {
+                                return ctx.chart.data.labels[ctx.dataIndex] + '\n' + value + '%';
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
 </head>
 <body>
     <div class="card" style="width: 320px; margin: 20px;">
         <img src="../../../../../../../../person.png" width="100" height="100"/>
         <p class="card-title" th:text="${firstName}+' '+${secondName}"></p>
     </div>
+
+    <p>Статистика по видам спорта</p>
+    <button th:onclick="'getStat('+${id}+');'">Показать</button>
+
+    <div class="container" style="width: 600px; height: 400px;">
+        <canvas id="myChart" width="600" height="400"></canvas>
+    </div>
+
 </body>
 </html>
