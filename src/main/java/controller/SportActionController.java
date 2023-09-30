@@ -54,6 +54,20 @@ public class SportActionController {
         return false;
     }
 
+    @PostMapping("/finishDistance")
+    public boolean finishByDistanceAction(Long sportActionId, @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime finishDateTime, float distance)
+    {
+        SportAction sportAction = sportActionRepository.findById(sportActionId).get();
+        if (sportAction.getSportKind().getPayMethod() == SportKind.convertMethod.byDistance)
+        {
+            sportAction.setDistance(distance);
+            sportAction.setFinishAction(finishDateTime);
+            sportActionRepository.save(sportAction);
+            return true;
+        }
+        return false;
+    }
+
 
 
     @GetMapping("/forEmployee")
