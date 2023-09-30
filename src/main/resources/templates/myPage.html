@@ -65,6 +65,17 @@
                     let inputDist = document.createElement("input")
                     divActiveTrain.appendChild(pDist)
                     divActiveTrain.appendChild(inputDist)
+
+                    finishBtn.onclick = () => {
+                        var xhr = new XMLHttpRequest()
+                        xhr.open("POST","../../../../sportAction/finishDistance?sportActionId="+trainId+"&finishDateTime="+inputFinishDateTime.value+"&distance="+inputDist.value)
+                        xhr.responseType="json"
+                        xhr.send()
+                        xhr.onload = () => {
+                            alert(xhr.response)
+                        }
+
+                    }
                 }
                 if (sportTypes[sportId] == 3) // Оплата по сложному методу
                 {
