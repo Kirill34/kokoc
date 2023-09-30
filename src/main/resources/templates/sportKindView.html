@@ -2,17 +2,93 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
     <title th:text="${name}"></title>
     <script>
         function getMonthStat(id)
         {
             var xhr = new XMLHttpRequest()
-            xhr.open("GET","../sportKind/"+id+"/byMonthStat")
+            xhr.open("GET","../../../../sportKind/"+id+"/byMonthStat")
             xhr.responseType="json"
             xhr.send()
             xhr.onload = () => {
-                alert(xhr.response)
+                let labels = []
+                let data = []
+                //return xhr.response
+                for (let key in xhr.response)
+                {
+                    //alert('Key='+key+' Data='+xhr.response[key])
+                    labels.push(key)
+                    data.push(xhr.response[key])
+                    showGraph(labels, data)
+                }
             }
+        }
+
+        function showGraph(labels, data)
+        {
+            // Vertical bar chart
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels, //['Hong Kong', 'Macau', 'Japan', 'Switzerland', 'Spain', 'Singapore'],
+                    datasets: [{
+                        label: 'Популярность вида спорта по месяцам 2023',
+                        data: data,//[84.308, 84.188, 84.118, 83.706, 83.5, 83.468],
+                        backgroundColor: [
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                        ],
+                        borderColor: [
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Life Expectancy by Country',
+                        position: 'top',
+                        fontSize: 16,
+                        padding: 20
+                    },
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                min: 0
+                            }
+                        }]
+                    }
+                }
+            });
         }
     </script>
 </head>
@@ -30,6 +106,10 @@
 
     <p>Статистика вида спорта по месяцам</p>
     <button th:onclick="'getMonthStat('+${id}+');'">Показать</button>
+
+    <div class="container" style="width: 600px; height: 400px;">
+        <canvas id="myChart" width="600" height="400"></canvas>
+    </div>
 
 
 </body>

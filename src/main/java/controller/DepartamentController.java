@@ -2,13 +2,17 @@ package controller;
 
 import model.Departament;
 import model.Employee;
+import model.SportAction;
 import org.springframework.boot.Banner;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import repo.DepartamentRepository;
 import repo.EmployeeRepository;
+import repo.SportActionRepository;
+import repo.SportKindRepository;
 
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -20,6 +24,12 @@ public class DepartamentController {
 
     @org.springframework.beans.factory.annotation.Autowired(required=true)
     EmployeeRepository employeeRepository;
+
+    @org.springframework.beans.factory.annotation.Autowired(required=true)
+    SportActionRepository sportActionRepository;
+
+    @org.springframework.beans.factory.annotation.Autowired(required=true)
+    private SportKindRepository sportKindRepository;
 
     @PostMapping("/add")
     public Long add(String name)
@@ -50,6 +60,20 @@ public class DepartamentController {
 
         List<Employee> employees = employeeRepository.findAllByDepartamentId(id);
         model.addAttribute("employees",employees);
+
+        List<SportAction> sportActionList = sportActionRepository.findAllByEmployeeDepartamentId(id);
+
+        HashMap<String,Integer> sportTimes = new HashMap<>();
+        for (SportAction s: sportActionList)
+        {
+            String sportName = s.getSportKind().getName();
+            if (!sportTimes.containsKey(sportName))
+                sportTimes.put(sportName,0);
+            int times = sportTimes.get(sportName);
+            sportTimes.put(sportName,times+1);
+        }
+
+        model.addAttribute("sportTimes",sportTimes);
 
         return new ModelAndView("departamentView");
     }

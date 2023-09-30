@@ -1,5 +1,6 @@
 package repo;
 
+import model.Departament;
 import model.Employee;
 import model.SportAction;
 import model.SportKind;
@@ -12,4 +13,6 @@ public interface SportActionRepository extends CrudRepository<SportAction,Long> 
     public List<SportAction> findAllByEmployee(Employee employee);
     public List<SportAction> findAllBySportKind(SportKind sportKind);
     public List<SportAction> findAllBySportKindId(Long id);
+    public List<SportAction> findAllByEmployeeDepartament(Departament departament);
+    public List<SportAction> findAllByEmployeeDepartamentId(Long id);
 }

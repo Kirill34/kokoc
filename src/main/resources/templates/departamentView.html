@@ -11,5 +11,12 @@
     <th:block th:each="item: ${employees}">
         <p th:text="${item.firstName}+' '+${item.secondName}"></p>
     </th:block>
+
+    <h5 th:text="'Сколько раз каким видом спорта занимались в подразделении'"></h5>
+    <th:block th:each="mapEntry : ${sportTimes}">
+        <p th:text="${mapEntry.key}"></p>
+        <p th:text="${mapEntry.value}"></p>
+    </th:block>
+
 </body>
 </html>
