@@ -49,6 +49,16 @@ public class EmployeeController {
         return new ModelAndView("employeeView");
     }
 
+    @GetMapping("/{id}/my/view")
+    public ModelAndView getMyView(Model model, @PathVariable Long id)
+    {
+        Employee employee = employeeRepository.findById(id).get();
+        model.addAttribute("firstName",employee.getFirstName());
+        model.addAttribute("secondName",employee.getSecondName());
+        model.addAttribute("id",employee.getId());
+        return new ModelAndView("myPage");
+    }
+
     @GetMapping("/{id}/stats/sportTimes")
     public HashMap<String,Integer> getSportTimes(@PathVariable Long id)
     {

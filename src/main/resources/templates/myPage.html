@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${firstName}+' '+${secondName}"></title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
+    <script>
+        sportTypes={}
+        trainId = 0
+
+        function startTrain(myId)
+        {
+            let select = document.getElementById("sportKinds")
+            let sportKindId = select.value
+            var xhr = new XMLHttpRequest()
+
+            let today = new Date();
+            let todayString = today.toJSON().slice(0,16)
+
+            xhr.open("POST","../../../../sportAction/start?employeeId="+myId+"&sportKindId="+sportKindId+"&startDateTime="+todayString)
+            xhr.responseType="json"
+            xhr.send()
+            xhr.onload = () => {
+                alert(xhr.response)
+                trainId = xhr.response
+
+                let sportId = document.getElementById("sportKinds").value
+                let divActiveTrain = document.getElementById("activeTrain")
+
+                let inputFinishDateTime = document.createElement("input")
+                let pFinish = document.createElement("p")
+                pFinish.innerText="Дата/время окончания тренировки: "
+
+                let finishBtn = document.createElement("button")
+                finishBtn.classList.add("btn","btn-danger")
+                finishBtn.innerText = "Завершить тренировку"
+
+                divActiveTrain.appendChild(pFinish)
+                divActiveTrain.appendChild(inputFinishDateTime)
+
+                console.log("sportType = ",sportTypes[sportId])
+
+                if (sportTypes[sportId] == "byMinute") // Поминутная оплата
+                {
+                    finishBtn.onclick = () => {
+                        var xhr = new XMLHttpRequest()
+                        xhr.open("POST","../../../../sportAction/finish?sportActionId="+trainId+"&finishDateTime="+inputFinishDateTime.value)
+                        xhr.responseType="json"
+                        xhr.send()
+                        xhr.onload = () => {
+                            alert(xhr.response)
+                        }
+
+                    }
+                }
+                if (sportTypes[sportId] == "byDistance") // Оплата по расстоянию
+                {
+                    let pDist = document.createElement("p")
+                    pDist.innerText="Введите пройденное расстояние:"
+                    let inputDist = document.createElement("input")
+                    divActiveTrain.appendChild(pDist)
+                    divActiveTrain.appendChild(inputDist)
+                }
+                if (sportTypes[sportId] == 3) // Оплата по сложному методу
+                {
+
+                }
+
+                divActiveTrain.appendChild(finishBtn)
+
+            }
+
+
+        }
+
+        function addAllKindsOfSport()
+        {
+            let select = document.getElementById("sportKinds")
+            var xhr = new XMLHttpRequest()
+            xhr.open("GET","../../../../sportKind/all")
+            xhr.responseType="json"
+            xhr.send()
+            xhr.onload = () => {
+                let r = xhr.response
+                for (let key in r)
+                {
+                    let option = document.createElement("option")
+                    option.value=r[key]["id"]
+                    option.innerText=r[key]["name"]
+                    sportTypes[r[key]["id"]]=r[key]["payMethod"]
+                    select.appendChild(option)
+                }
+            }
+        }
+
+        function getAllStat(id)
+        {
+            getMonthStat(id)
+            getStat(id)
+        }
+
+        function getStat(id)
+        {
+            var xhr = new XMLHttpRequest()
+            xhr.open("GET","../../../../employee/"+id+"/stats/sportTimes")
+            xhr.responseType="json"
+            xhr.send()
+            xhr.onload = () => {
+                let labels = []
+                let data = []
+                //return xhr.response
+                for (let key in xhr.response)
+                {
+                    //alert('Key='+key+' Data='+xhr.response[key])
+                    labels.push(key)
+                    data.push(xhr.response[key])
+                    showGraph(labels, data)
+                }
+            }
+        }
+
+        function showGraph(labels, data) {
+            // Doughnut chart
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,//['Dairy', 'Fruits', 'Lean meats', 'Vegetables', 'Whole grains'],
+                    datasets: [{
+                        data: data,//[27.92, 17.53, 14.94, 26.62, 12.99],
+                        backgroundColor: ['#e91e63', '#00e676', '#ff5722', '#1e88e5', '#ffd600'],
+                        borderWidth: 0.5,
+                        borderColor: '#ddd'
+                    }]
+                },
+                options: {
+                    title: {
+                        display: true,
+                        text: 'Популярность видов спорта',
+                        position: 'top',
+                        fontSize: 16,
+                        fontColor: '#111',
+                        padding: 20
+                    },
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 20,
+                            fontColor: '#111',
+                            padding: 15
+                        }
+                    },
+                    tooltips: {
+                        enabled: false
+                    },
+                    plugins: {
+                        datalabels: {
+                            color: '#111',
+                            textAlign: 'center',
+                            font: {
+                                lineHeight: 1.6
+                            },
+                            formatter: function (value, ctx) {
+                                return ctx.chart.data.labels[ctx.dataIndex] + '\n' + value + '%';
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function getMonthStat(id)
+        {
+            var xhr = new XMLHttpRequest()
+            xhr.open("GET","../../../../employee/"+id+"/stats/byMonth")
+            xhr.responseType="json"
+            xhr.send()
+            xhr.onload = () => {
+                let labels = []
+                let data = []
+                //return xhr.response
+                for (let key in xhr.response)
+                {
+                    //alert('Key='+key+' Data='+xhr.response[key])
+                    if (key>0)
+                    {
+                        labels.push(key)
+                        data.push(xhr.response[key])
+                        showGraphByMonth(labels, data)
+                    }
+
+                }
+            }
+        }
+
+        function showGraphByMonth(labels, data)
+        {
+            // Vertical bar chart
+            var ctx = document.getElementById('byMonth').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь'],//labels, //['Hong Kong', 'Macau', 'Japan', 'Switzerland', 'Spain', 'Singapore'],
+                    datasets: [{
+                        label: 'Спортивная активность по месяцам 2023',
+                        data: data,//[84.308, 84.188, 84.118, 83.706, 83.5, 83.468],
+                        backgroundColor: [
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                        ],
+                        borderColor: [
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Спортивная активность по месяцам 2023',
+                        position: 'top',
+                        fontSize: 16,
+                        padding: 20
+                    },
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                min: 0
+                            }
+                        }]
+                    }
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<div class="card" style="width: 320px; margin: 20px;">
+    <img src="../../../../../../../../person.png" width="100" height="100"/>
+    <p class="card-title" th:text="${firstName}+' '+${secondName}"></p>
+</div>
+
+<div class="card" style="width: 600px; padding: 20px; margin: 20px;">
+
+    <p class="card-title">
+        Тренировка
+    </p>
+    <select id="sportKinds">
+    </select>
+    <script>
+        addAllKindsOfSport()
+    </script>
+    <button class="btn btn-success" th:onclick="'startTrain('+${id}+');'">Начать тренировку</button>
+    <div id="activeTrain">
+
+    </div>
+</div>
+
+<p>Статистика по видам спорта</p>
+<button th:onclick="'getAllStat('+${id}+');'">Показать</button>
+
+<div class="container" style="width: 600px; height: 400px;">
+    <div class="col">
+        <canvas id="myChart" width="600" height="400"></canvas>
+    </div>
+    <div class="col">
+        <canvas id="byMonth" width="600" height="400"></canvas>
+    </div>
+</div>
+
+</body>
+</html>
