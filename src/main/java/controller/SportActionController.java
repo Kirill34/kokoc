@@ -46,10 +46,15 @@ public class SportActionController {
     public boolean finish(Long sportActionId, @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime finishDateTime)
     {
         SportAction sportAction = sportActionRepository.findById(sportActionId).get();
-        sportAction.setFinishAction(finishDateTime);
-        sportActionRepository.save(sportAction);
-        return true;
+        if (sportAction.getSportKind().getPayMethod() == SportKind.convertMethod.byMinute) {
+            sportAction.setFinishAction(finishDateTime);
+            sportActionRepository.save(sportAction);
+            return true;
+        }
+        return false;
     }
+
+
 
     @GetMapping("/forEmployee")
     public List<SportAction> getSportActionsByEmployee(Long employeeId)
