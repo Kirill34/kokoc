@@ -19,7 +19,7 @@
             card.classList.add("card")
             card.style.margin = "10px"
             card.style.textDecoration="none"
-            card.style.width="320px"
+            card.style.width="150px"
 
             let cardTitle = document.createElement("h5")
             cardTitle.classList.add("card-title")
@@ -27,8 +27,8 @@
             card.appendChild(cardTitle)
 
             let img = document.createElement("img")
-            img.src = logoFile
-            img.width=200
+            img.src = "../../../../../logo/"+logoFile
+            img.width=100
             img.classList.add("img-thumbnail")
             card.appendChild(img)
 

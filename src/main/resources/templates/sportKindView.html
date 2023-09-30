@@ -101,28 +101,31 @@
 </head>
 <body>
     <h1 th:text="${name}"></h1>
-    <img th:src="${logoFile}"/>
-    <p>
-        Люди в данном виде спорта
-    </p>
+    <img width="100" th:src="'../../../../../logo/'+${logoFile}"/>
 
 
-    <div class="container">
-        <div class="row">
-            <th:block th:each="item: ${employees}">
-                <div class="col-sm" style="border: gray;">
-                    <a th:href="'../../../../../../employee/'+${item.id}+'/view'">
-                        <div class="card" style="margin: 20px; border: gray;">
-                            <img src="../../../../../../person.png" width="100" height="100" class="img">
-                            <p style="font-size: 20px;" class="card-title" th:text="${item.firstName}+' '+${item.secondName}"></p>
-                        </div>
-                    </a>
+    <div class="card">
+        <h5 class="card-title">
+            Люди в данном виде спорта
+        </h5>
+        <div class="container">
+            <div class="row">
+                <th:block th:each="item: ${employees}">
+                    <div class="col-sm" style="border: gray;">
+                        <a th:href="'../../../../../../employee/'+${item.id}+'/view'">
+                            <div class="card" style="margin: 20px; border: gray;">
+                                <img src="../../../../../../person.png" width="100" height="100" class="img">
+                                <p style="font-size: 20px;" class="card-title" th:text="${item.firstName}+' '+${item.secondName}"></p>
+                            </div>
+                        </a>
 
-                </div>
+                    </div>
 
-            </th:block>
+                </th:block>
+            </div>
         </div>
     </div>
+
 
     <p th:text="${allSum}"></p>
 
