@@ -78,4 +78,9 @@ public class DepartamentController {
         return new ModelAndView("departamentView");
     }
 
+    @GetMapping("/{id}/employees")
+    public List<Employee> getEmployees(@PathVariable Long id)
+    {
+        return employeeRepository.findAllByDepartamentId(id);
+    }
 }
