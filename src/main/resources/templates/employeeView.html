@@ -8,6 +8,12 @@
     <link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
     <script>
 
+        function getAllStat(id)
+        {
+            getMonthStat(id)
+            getStat(id)
+        }
+
         function getStat(id)
         {
             var xhr = new XMLHttpRequest()
@@ -78,6 +84,96 @@
                 }
             });
         }
+
+        function getMonthStat(id)
+        {
+            var xhr = new XMLHttpRequest()
+            xhr.open("GET","../../../../employee/"+id+"/stats/byMonth")
+            xhr.responseType="json"
+            xhr.send()
+            xhr.onload = () => {
+                let labels = []
+                let data = []
+                //return xhr.response
+                for (let key in xhr.response)
+                {
+                    //alert('Key='+key+' Data='+xhr.response[key])
+                    if (key>0)
+                    {
+                        labels.push(key)
+                        data.push(xhr.response[key])
+                        showGraphByMonth(labels, data)
+                    }
+
+                }
+            }
+        }
+
+        function showGraphByMonth(labels, data)
+        {
+            // Vertical bar chart
+            var ctx = document.getElementById('byMonth').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь'],//labels, //['Hong Kong', 'Macau', 'Japan', 'Switzerland', 'Spain', 'Singapore'],
+                    datasets: [{
+                        label: 'Спортивная активность по месяцам 2023',
+                        data: data,//[84.308, 84.188, 84.118, 83.706, 83.5, 83.468],
+                        backgroundColor: [
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                        ],
+                        borderColor: [
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                            'rgba(3, 169, 244, 0.6)',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Спортивная активность по месяцам 2023',
+                        position: 'top',
+                        fontSize: 16,
+                        padding: 20
+                    },
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                min: 0
+                            }
+                        }]
+                    }
+                }
+            });
+        }
     </script>
 </head>
 <body>
@@ -87,10 +183,15 @@
     </div>
 
     <p>Статистика по видам спорта</p>
-    <button th:onclick="'getStat('+${id}+');'">Показать</button>
+    <button th:onclick="'getAllStat('+${id}+');'">Показать</button>
 
     <div class="container" style="width: 600px; height: 400px;">
-        <canvas id="myChart" width="600" height="400"></canvas>
+        <div class="col">
+            <canvas id="myChart" width="600" height="400"></canvas>
+        </div>
+        <div class="col">
+            <canvas id="byMonth" width="600" height="400"></canvas>
+        </div>
     </div>
 
 </body>

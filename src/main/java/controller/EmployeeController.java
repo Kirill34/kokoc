@@ -10,6 +10,8 @@ import repo.EmployeeRepository;
 import repo.SportActionRepository;
 import repo.SportKindRepository;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -61,5 +63,27 @@ public class EmployeeController {
             sportTimes.put(sportName,times+1);
         }
         return sportTimes;
+    }
+
+    @GetMapping("/{id}/stats/byMonth")
+    public List<Integer> getByMonthStat(@PathVariable Long id)
+    {
+        Employee employee = employeeRepository.findById(id).get();
+        ArrayList<Integer> res = new ArrayList<>();
+
+        for (int i = 0; i<=12; i++)
+        {
+            res.add(0);
+        }
+
+        List<SportAction> sportActionList = sportActionRepository.findAllByEmployee(employee);
+        for (SportAction s:
+                sportActionList) {
+            LocalDateTime dateTime = s.getStartAction();
+            Integer monthNum = dateTime.getMonthValue();
+            res.add(monthNum,1); //= res.get(dateTime.getMonthValue()) + 1;
+            //res.put(dateTime.getMonth().getValue(), (res.containsKey(dateTime.getMonth().getValue())) ? 1 : (res.get(dateTime.getMonth().getValue()) + 1));
+        }
+        return res;
     }
 }
