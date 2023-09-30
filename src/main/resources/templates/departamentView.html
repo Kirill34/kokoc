@@ -3,20 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="'Подразделение '+${name}"></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
 </head>
 <body>
     <h5 th:text="'Подразделение '+${name}"></h5>
 
     <h5 th:text="'Работники подразделения'"></h5>
-    <th:block th:each="item: ${employees}">
-        <p th:text="${item.firstName}+' '+${item.secondName}"></p>
-    </th:block>
+
+    <div class="container">
+        <div class="row">
+            <th:block th:each="item: ${employees}">
+                <div class="col-sm" style="border: gray;">
+                    <a th:href="'../../../../../../employee/'+${item.id}+'/view'">
+                        <div class="card" style="margin: 20px; border: gray;">
+                            <img src="../../../../../../person.png" width="100" height="100" class="img">
+                            <p style="font-size: 20px;" class="card-title" th:text="${item.firstName}+' '+${item.secondName}"></p>
+                        </div>
+                    </a>
+
+                </div>
+
+            </th:block>
+        </div>
+    </div>
+
+
 
     <h5 th:text="'Сколько раз каким видом спорта занимались в подразделении'"></h5>
-    <th:block th:each="mapEntry : ${sportTimes}">
-        <p th:text="${mapEntry.key}"></p>
-        <p th:text="${mapEntry.value}"></p>
-    </th:block>
+    <div class="container">
+        <div class="row">
+            <th:block th:each="mapEntry : ${sportTimes}">
+                <div class="card" style="margin: 20px;">
+                    <p style="font-size: 20px;" class="card-title" th:text="${mapEntry.key}"></p>
+                    <p style="font-size: 14px;" th:text="${mapEntry.value}+' раз'"></p>
+                </div>
+
+            </th:block>
+        </div>
+    </div>
+
+
 
 </body>
 </html>

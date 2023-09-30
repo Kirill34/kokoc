@@ -16,8 +16,9 @@
 
             let card = document.createElement("div")
             card.classList.add("card")
-            card.style.margin = "40px"
+            card.style.margin = "10px"
             card.style.textDecoration="none"
+            card.style.width="320px"
 
             let cardTitle = document.createElement("h5")
             cardTitle.classList.add("card-title")
@@ -35,7 +36,7 @@
         }
         function getAllSportKinds()
         {
-          let body = document.getElementsByTagName("body")[0]
+          let body = document.getElementById("sport-row");//document.getElementsByTagName("body")[0]
           var xhr = new XMLHttpRequest()
           xhr.open("GET","../sportKind/all")
           xhr.responseType="json"
@@ -45,7 +46,11 @@
               for (let key in sports)
               {
                   sport = sports[key]
-                  body.appendChild(createSportCard(sport["id"], sport["name"], sport["logoFile"]))
+                  let card = createSportCard(sport["id"], sport["name"], sport["logoFile"])
+                  let col = document.createElement("div")
+                  col.classList.add("col-sm")
+                  col.appendChild(card)
+                  body.appendChild(col)
               }
           }
         }
@@ -93,7 +98,11 @@
             <button class="btn btn-primary" onclick="addNewSport(); return false;"></button>
         </form>
     </div>
+    <div class="container">
+        <div class="row" id="sport-row">
 
+        </div>
+    </div>
     <script>
         getAllSportKinds();
     </script>
