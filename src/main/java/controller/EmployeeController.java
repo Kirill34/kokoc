@@ -1,9 +1,9 @@
 package controller;
 
 import model.Employee;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import repo.DepartamentRepository;
 import repo.EmployeeRepository;
 
@@ -23,5 +23,15 @@ public class EmployeeController {
         Employee employee = new Employee(firstName,secondName,departamentRepository.findById(departamentId).get());
         employeeRepository.save(employee);
         return employee.getId();
+    }
+
+    @GetMapping("/{id}/view")
+    public ModelAndView getView(Model model, @PathVariable Long id)
+    {
+        Employee employee = employeeRepository.findById(id).get();
+        model.addAttribute("firstName",employee.getFirstName());
+        model.addAttribute("secondName",employee.getSecondName());
+        model.addAttribute("id",employee.getId());
+        return new ModelAndView("employeeView");
     }
 }
