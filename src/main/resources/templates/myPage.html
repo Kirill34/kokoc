@@ -69,6 +69,10 @@
 
         function startTrain(myId)
         {
+            let btnStartTrain = document.getElementById("btnStartTrain")
+            btnStartTrain.hidden=true
+            //select.hidden=true
+
             let select = document.getElementById("sportKinds")
             //select.classList.add("form-select")
             let sportKindId = select.value
@@ -99,6 +103,13 @@
 
                 divActiveTrain.appendChild(pFinish)
                 divActiveTrain.appendChild(inputFinishDateTime)
+                divActiveTrain.appendChild(finishBtn)
+
+                let pEarn = document.createElement("p")
+                pEarn.style.background="#012301"
+                pEarn.style.color="#aeeaae"
+                divActiveTrain.appendChild(pEarn)
+
 
                 console.log("sportType = ",sportTypes[sportId])
 
@@ -110,7 +121,12 @@
                         xhr.responseType="json"
                         xhr.send()
                         xhr.onload = () => {
-                            alert(xhr.response)
+                            //alert(xhr.response)
+                            let answ = xhr.response
+                            pEarn.innerText=("Вы заработали "+answ["money"]+" монет на "+answ["charityEvent"]["name"])
+                            finishBtn.hidden=true
+                            pFinish.hidden=true
+                            finishBtn.hidden=true
                         }
 
                     }
@@ -130,7 +146,11 @@
                         xhr.responseType="json"
                         xhr.send()
                         xhr.onload = () => {
-                            alert(xhr.response)
+                            let answ = xhr.response
+                            pEarn.innerText=("Вы заработали "+answ["money"]+" монет на "+answ["charityEvent"]["name"])
+                            finishBtn.hidden=true
+                            pFinish.hidden=true
+                            finishBtn.hidden=true
                         }
 
                     }
@@ -140,7 +160,7 @@
 
                 }
 
-                divActiveTrain.appendChild(finishBtn)
+
 
             }
 
@@ -371,7 +391,7 @@
     <script>
         addAllKindsOfSport()
     </script>
-    <button class="btn btn-success" th:onclick="'startTrain('+${id}+');'">Начать тренировку</button>
+    <button id="btnStartTrain" class="btn btn-success" th:onclick="'startTrain('+${id}+');'">Начать тренировку</button>
     <div id="activeTrain">
 
     </div>

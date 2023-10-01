@@ -44,7 +44,7 @@ public class SportActionController {
     }
 
     @PostMapping("/finish")
-    public boolean finish(Long sportActionId, @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime finishDateTime,Long eventId)
+    public CharitySportTransaction finish(Long sportActionId, @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime finishDateTime,Long eventId)
     {
         CharityEvent charityEvent = charityEventRepository.findById(eventId).get();
         SportAction sportAction = sportActionRepository.findById(sportActionId).get();
@@ -62,13 +62,13 @@ public class SportActionController {
             charitySportTransaction.setMoney(money);
             charitySportTransactionRepository.save(charitySportTransaction);
 
-            return true;
+            return charitySportTransaction;
         }
-        return false;
+        return null;
     }
 
     @PostMapping("/finishDistance")
-    public boolean finishByDistanceAction(Long sportActionId, @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime finishDateTime, float distance,Long eventId)
+    public CharitySportTransaction finishByDistanceAction(Long sportActionId, @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime finishDateTime, float distance,Long eventId)
     {
         CharityEvent charityEvent = charityEventRepository.findById(eventId).get();
         SportAction sportAction = sportActionRepository.findById(sportActionId).get();
@@ -88,9 +88,9 @@ public class SportActionController {
             charitySportTransaction.setMoney(money);
             charitySportTransactionRepository.save(charitySportTransaction);
 
-            return true;
+            return charitySportTransaction;
         }
-        return false;
+        return null;
     }
 
     @PostMapping("/{id}/addActionGeoPoint")
