@@ -1,5 +1,6 @@
 package controller;
 
+import model.CharitySportTransaction;
 import model.Departament;
 import model.Employee;
 import model.SportAction;
@@ -7,10 +8,7 @@ import org.springframework.boot.Banner;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import repo.DepartamentRepository;
-import repo.EmployeeRepository;
-import repo.SportActionRepository;
-import repo.SportKindRepository;
+import repo.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +28,9 @@ public class DepartamentController {
 
     @org.springframework.beans.factory.annotation.Autowired(required=true)
     private SportKindRepository sportKindRepository;
+
+    @org.springframework.beans.factory.annotation.Autowired(required=true)
+    private CharitySportTransactionRepository charitySportTransactionRepository;
 
     @PostMapping("/add")
     public Long add(String name)
@@ -72,6 +73,14 @@ public class DepartamentController {
             int times = sportTimes.get(sportName);
             sportTimes.put(sportName,times+1);
         }
+
+        List<CharitySportTransaction> transactions = charitySportTransactionRepository.findAllBySportActionEmployeeDepartamentId(id);
+        int sum = 0;
+        for (CharitySportTransaction t: transactions)
+        {
+            sum+=t.getMoney();
+        }
+        model.addAttribute("money",sum);
 
         model.addAttribute("sportTimes",sportTimes);
 

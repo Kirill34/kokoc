@@ -10,6 +10,12 @@
 <body>
     <h5 th:text="'Подразделение '+${name}"></h5>
 
+    <div class="card" style="width: 320px; margin: 20px; padding: 10px;">
+        <img src="../../../../../../../../logo/coins.png" width="100" height="100"/>
+        <p class="card-title">За все время подразделение заработало</p>
+        <p class="card-body" th:text="${money}"></p>
+    </div>
+
     <h5 th:text="'Работники подразделения'"></h5>
 
     <div class="container">
