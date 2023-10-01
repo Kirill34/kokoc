@@ -1,14 +1,12 @@
 package controller;
 
+import model.CharitySportTransaction;
 import model.Employee;
 import model.SportAction;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import repo.DepartamentRepository;
-import repo.EmployeeRepository;
-import repo.SportActionRepository;
-import repo.SportKindRepository;
+import repo.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -30,6 +28,9 @@ public class EmployeeController {
 
     @org.springframework.beans.factory.annotation.Autowired(required=true)
     private SportKindRepository sportKindRepository;
+
+    @org.springframework.beans.factory.annotation.Autowired(required=true)
+    private CharitySportTransactionRepository charitySportTransactionRepository;
 
     @PostMapping("/add")
     public Long add(String firstName, String secondName, Long departamentId)
@@ -56,6 +57,13 @@ public class EmployeeController {
         model.addAttribute("firstName",employee.getFirstName());
         model.addAttribute("secondName",employee.getSecondName());
         model.addAttribute("id",employee.getId());
+        List<CharitySportTransaction> transactions = charitySportTransactionRepository.findAllBySportActionEmployeeId(id);
+        int sum = 0;
+        for (CharitySportTransaction t: transactions)
+        {
+            sum+=t.getMoney();
+        }
+        model.addAttribute("money",sum);
         return new ModelAndView("myPage");
     }
 
