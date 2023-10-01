@@ -11,4 +11,6 @@ public interface CharitySportTransactionRepository extends CrudRepository<Charit
     public List<CharitySportTransaction> findAllBySportActionEmployee(Employee employee);
 
     public List<CharitySportTransaction> findAllBySportActionEmployeeDepartamentId(Long id);
+
+    public List<CharitySportTransaction> findAllBySportAction_SportKindId(Long id);
 }
