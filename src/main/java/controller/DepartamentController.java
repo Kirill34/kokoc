@@ -1,5 +1,6 @@
 package controller;
 
+import io.swagger.models.auth.In;
 import model.CharitySportTransaction;
 import model.Departament;
 import model.Employee;
@@ -46,9 +47,29 @@ public class DepartamentController {
         return departamentRepository.findAllByIdGreaterThan(0L);
     }
 
+    @GetMapping("/allMoney")
+    public HashMap<String, Integer> getDepartamentMoney()
+    {
+        HashMap<String,Integer> departamentMoney = new HashMap<>();
+        List<Departament> departaments = departamentRepository.findAllByIdGreaterThan(0L);
+        for (Departament d: departaments)
+        {
+            List<CharitySportTransaction> transactions = charitySportTransactionRepository.findAllBySportActionEmployeeDepartamentId(d.getId());
+            int sum = 0;
+            for (CharitySportTransaction t: transactions)
+            {
+                sum += t.getMoney();
+            }
+            departamentMoney.put(d.getName(),sum);
+        }
+        return departamentMoney;
+    }
+
     @GetMapping("/view")
     public ModelAndView getPageForAllSports(Model model)
     {
+
+
         return new ModelAndView("allDepartamentsView");
     }
 
