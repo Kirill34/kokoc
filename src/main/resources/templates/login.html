@@ -23,7 +23,7 @@
                     let id = arr[key]["id"]
 
                     let a = document.createElement("a")
-                    a.innerText = firstName+" "+secondName
+                    a.innerText = "Войти как: "+firstName+" "+secondName
                     a.href="../../employee/"+id+"/my/view"
 
                     let div = document.createElement("div")
@@ -36,6 +36,13 @@
     </script>
 </head>
 <body>
+
+    <div class="alert alert-primary">
+        <a href="../../../../../../../../">
+            Главная
+        </a>
+         / Страница авторизации
+    </div>
 
     <p>Выберите подразделение:</p>
     <select id="departament" onchange="showDepartamentEmployees()">
